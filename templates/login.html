@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <title>MyRecs</title>
+  </head>
+  <body>
+    <nav class="navbar navbar-dark bg-dark fixed-top">
+      <div class="container-fluid">
+        <a
+          class="navbar-brand text-light"
+          href="#"
+          style="
+            font-family: 'Times New Roman', Times, serif;
+            font-weight: bold;
+          "
+        >
+          MyRecs
+        </a>
+      </div>
+    </nav>
+
+    <div
+      class="container d-flex justify-content-center align-items-center vh-100"
+      style="background-color: #f8f9fa; padding-top: 56px"
+    >
+      <div class="card shadow-lg p-4" style="max-width: 400px">
+        <div class="card-body">
+          <h1 class="text-center mb-4" style="font-weight: bold">LOGIN</h1>
+          <form action="{{url_for('recs.records')}}" method="post">
+            <div class="mb-3">
+              <label for="name" class="form-label fw-semibold">NAME:</label>
+              <input
+                type="text"
+                class="form-control"
+                id="name"
+                name="name"
+                placeholder="Enter Name"
+                required
+              />
+            </div>
+            <div class="mb-3">
+              <label for="email" class="form-label fw-semibold">EMAIL:</label>
+              <input
+                type="email"
+                class="form-control"
+                id="email"
+                name="email"
+                placeholder="Enter email"
+                required
+              />
+            </div>
+            <button
+              type="submit"
+              class="btn btn-primary w-100"
+              style="background-color: #007bff"
+            >
+              Submit
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
