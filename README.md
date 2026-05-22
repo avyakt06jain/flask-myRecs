@@ -2,7 +2,7 @@
 
 MyRecs is a Flask-based record management web application for tracking buyers, products, quantities, prices, payment status, and notes in a clean account-based workspace. The application provides persistent storage, authentication, searchable records, dashboard metrics, CSV export, and server-side validation.
 
-Live app: https://flask-my-recs-gpow.vercel.app/
+Live app: https://flask-my-recs.vercel.app/
 
 ## Features
 
