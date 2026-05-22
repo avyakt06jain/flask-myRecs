@@ -18,7 +18,7 @@ def create_app(test_config=None):
     )
     app.config.from_mapping(
         SECRET_KEY=os.environ.get("SECRET_KEY", "dev-only-change-me"),
-        DATABASE=os.path.join(app.instance_path, "myrecs.sqlite3"),
+        DATABASE=default_database_path(app.instance_path),
         SESSION_COOKIE_HTTPONLY=True,
         SESSION_COOKIE_SAMESITE="Lax",
         PERMANENT_SESSION_LIFETIME=60 * 60 * 8,
@@ -27,7 +27,7 @@ def create_app(test_config=None):
     if test_config:
         app.config.update(test_config)
 
-    os.makedirs(app.instance_path, exist_ok=True)
+    os.makedirs(os.path.dirname(app.config["DATABASE"]), exist_ok=True)
 
     app.teardown_appcontext(close_db)
     app.cli.add_command(init_db)
@@ -58,3 +58,12 @@ def create_app(test_config=None):
         return redirect(url_for("records.create"))
 
     return app
+
+
+def default_database_path(instance_path):
+    configured_database = os.environ.get("DATABASE")
+    if configured_database:
+        return configured_database
+    if os.environ.get("VERCEL"):
+        return "/tmp/myrecs.sqlite3"
+    return os.path.join(instance_path, "myrecs.sqlite3")

@@ -174,15 +174,18 @@ Or with the project virtual environment:
 | Variable | Description | Required |
 | --- | --- | --- |
 | `SECRET_KEY` | Flask session signing key | Recommended for all non-local runs |
+| `DATABASE` | Optional SQLite database path override | No |
 
 ## Database
 
-MyRecs uses SQLite by default. The database file is created inside the `instance/` directory. The schema includes:
+MyRecs uses SQLite by default. In local development, the database file is created inside the `instance/` directory. On Vercel, the app uses `/tmp/myrecs.sqlite3` because the deployed project directory is read-only.
 
 - `users`: account data with hashed passwords
 - `records`: user-owned buyer/product records with quantity, price, status, notes, and timestamps
 
 The application enables SQLite foreign keys and uses indexes for common user-scoped record queries.
+
+Note: Vercel serverless storage in `/tmp` is ephemeral. It prevents runtime crashes and is useful for demos, but records can disappear when the function instance is recycled. For durable production data on Vercel, use a hosted database such as Vercel Postgres, Neon, Supabase, or another external SQL database.
 
 ## Deployment
 
