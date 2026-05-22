@@ -1,62 +1,195 @@
-# Flask Web Application (myRecs)
+# MyRecs
 
-## Table of Contents
-1. [Description](#description)
-2. [Directories](#directories)
-3. [What Each `.py` File Does](#what-each-py-file-does)
-4. [Main Code](#main-code)
-5. [Contributions](#contributions)
-6. [License](#license)
+MyRecs is a Flask-based record management web application for tracking buyers, products, quantities, prices, payment status, and notes in a clean account-based workspace. The application provides persistent storage, authentication, searchable records, dashboard metrics, CSV export, and server-side validation.
 
-## Description
-**myRecs** is a simple Flask web application that allows users to manage and store records. The application features user authentication (login/logout), a homepage to view records, and a page for adding new records. It organizes different functionalities into separate modules using Flask Blueprints for better structure and scalability. 
-With **myRecs**, users can:
-- Log in to access the records
-- View a list of stored records
-- Add new records to the list
-- Log out and clear session data
-  
-The application is designed to be easily deployable and customizable, providing a good foundation for a variety of web applications requiring record management.
+Live app: https://flask-my-recs-gpow.vercel.app/
 
+## Features
 
-## Directories
-The project consists of the following directories and files:
-- **main.py**: The entry point of the application
-- **homepg.py**: Contains the home page blueprint
-- **lgn.py**: Contains the login blueprint
-- **recs.py**: Contains the records blueprint and the logic for adding/viewing records
-- **addingrecs.py**: Contains the blueprint for adding records
-- **lgout.py**: Contains the logout blueprint
-- **data.py**: Stores the list of records in memory
-- **templates/**: Directory for HTML templates used in the application (homepg.html, login.html, recs.html, addingrecs.html)
+- User registration, login, and logout
+- Password hashing with Werkzeug
+- User-scoped records so each account only sees its own data
+- Create, edit, delete, search, and filter records
+- Track record status as open, paid, or cancelled
+- Dashboard metrics for total records, total value, open value, and paid value
+- CSV export for filtered record data
+- SQLite persistence with schema constraints, indexes, and timestamps
+- CSRF protection for form submissions
+- Security response headers
+- Responsive HTML/CSS interface
+- Pytest test coverage for core workflows
 
-## What Each `.py` File Does
-1. **main.py**: 
-   - Initializes the Flask app and registers all blueprints (`homepg`, `lgn`, `recs`, `lgout`, `addingrecs`).
-   - Also contains the secret key for sessions and runs the app.
-2. **homepg.py**: 
-   - Contains the blueprint for the homepage of the web application. This blueprint renders the home page when the user accesses the root route.
-3. **lgn.py**: 
-   - Contains the blueprint for the login page. It processes the login form and renders the login page.
-4. **recs.py**: 
-   - Handles the records page, where the user can add and view records. It also manages session data for the logged-in user and interacts with the `data.py` module to store records.
-5. **addingrecs.py**: 
-   - Provides functionality for the page where users can add new records. It renders the add records form.
-6. **lgout.py**: 
-   - Contains the logic to log out the user, clearing the session and redirecting the user to the home page.
-7. **data.py**: 
-   - Stores the records in memory as a list (`records_list`). It provides the data for the records page and allows new records to be added.
+## Tech Stack
 
-## Main Code
-The main code of the application is located in the **main.py** file. This file initializes the Flask application, registers the blueprints for different routes, and runs the app.
+- Python
+- Flask
+- SQLite
+- Jinja2 templates
+- HTML/CSS
+- Werkzeug security utilities
+- Pytest
+- Vercel deployment configuration
 
-## Contributions
-Contributions to this project are welcome! To contribute:
-1. Fork the repository.
-2. Create a new branch (`git checkout -b feature-branch`).
-3. Make your changes and commit them (`git commit -m 'Add new feature'`).
-4. Push to your forked repository (`git push origin feature-branch`).
-5. Open a pull request on the original repository.
+## Architecture
 
-## License
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+The application uses a Flask app factory pattern with separate modules for authentication, records, database access, and security concerns. Routes are grouped using Flask blueprints, while SQLite is used as the persistence layer.
+
+```text
+Browser
+  |
+  v
+Flask app factory
+  |
+  +-- Auth blueprint
+  |     +-- register
+  |     +-- login
+  |     +-- logout
+  |
+  +-- Records blueprint
+  |     +-- dashboard
+  |     +-- create record
+  |     +-- edit record
+  |     +-- delete record
+  |     +-- export CSV
+  |
+  +-- Security helpers
+  |     +-- current user loading
+  |     +-- login_required
+  |     +-- CSRF validation
+  |     +-- response headers
+  |
+  v
+SQLite database
+```
+
+## Project Structure
+
+```text
+flask-myRecs/
+├── main.py
+├── requirements.txt
+├── vercel.json
+├── README.md
+├── myrecs
+│   ├── __init__.py
+│   ├── auth.py
+│   ├── database.py
+│   ├── records.py
+│   └── security.py
+├── static
+│   └── css
+│       └── app.css
+├── templates
+│   ├── base.html
+│   ├── auth
+│   │   ├── login.html
+│   │   └── register.html
+│   └── records
+│       ├── dashboard.html
+│       └── form.html
+└── tests
+    └── test_app.py
+```
+
+## Key Files
+
+- `main.py`: WSGI entry point used by Flask and deployment platforms.
+- `myrecs/__init__.py`: Creates and configures the Flask app.
+- `myrecs/auth.py`: Handles registration, login, and logout.
+- `myrecs/database.py`: Manages SQLite connections, schema creation, and demo seeding.
+- `myrecs/records.py`: Contains record dashboard, CRUD, filtering, metrics, and CSV export logic.
+- `myrecs/security.py`: Provides login checks, CSRF validation, current user loading, and security headers.
+- `templates/`: Jinja2 templates for the UI.
+- `static/css/app.css`: Application styling.
+- `tests/test_app.py`: Automated tests for authentication, protected routes, validation, and exports.
+
+## Run Locally
+
+Create and activate a virtual environment:
+
+```bash
+python -m venv .venv
+source .venv/bin/activate
+```
+
+Install dependencies:
+
+```bash
+pip install -r requirements.txt
+```
+
+Set a secret key:
+
+```bash
+export SECRET_KEY="change-this-in-production"
+```
+
+Initialize the database:
+
+```bash
+flask --app main init-db
+```
+
+Optionally seed demo data:
+
+```bash
+flask --app main init-db --seed-demo
+```
+
+Start the development server:
+
+```bash
+flask --app main run
+```
+
+Open the app at:
+
+```text
+http://127.0.0.1:5000
+```
+
+## Demo Account
+
+If the database is initialized with `--seed-demo`, use:
+
+```text
+Email: demo@myrecs.local
+Password: password123
+```
+
+## Running Tests
+
+```bash
+pytest
+```
+
+Or with the project virtual environment:
+
+```bash
+.venv/bin/python -m pytest -q
+```
+
+## Environment Variables
+
+| Variable | Description | Required |
+| --- | --- | --- |
+| `SECRET_KEY` | Flask session signing key | Recommended for all non-local runs |
+
+## Database
+
+MyRecs uses SQLite by default. The database file is created inside the `instance/` directory. The schema includes:
+
+- `users`: account data with hashed passwords
+- `records`: user-owned buyer/product records with quantity, price, status, notes, and timestamps
+
+The application enables SQLite foreign keys and uses indexes for common user-scoped record queries.
+
+## Deployment
+
+The repository includes `vercel.json` for Vercel deployment using `main.py` as the Python entry point.
+
+Live deployment:
+
+```text
+https://flask-my-recs-gpow.vercel.app/
+```

@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block title %}Records - MyRecs{% endblock %}
+
+{% block content %}
+<section class="workspace-heading">
+  <div>
+    <p class="eyebrow">Workspace</p>
+    <h1>Records dashboard</h1>
+  </div>
+  <div class="heading-actions">
+    <a class="button button-secondary" href="{{ url_for('records.export_csv', q=query, status=selected_status) }}">Export CSV</a>
+    <a class="button button-primary" href="{{ url_for('records.create') }}">Add record</a>
+  </div>
+</section>
+
+<section class="metric-grid" aria-label="Record summary">
+  <div class="metric"><span>Total records</span><strong>{{ metrics.count }}</strong></div>
+  <div class="metric"><span>Total value</span><strong>Rs {{ metrics.total }}</strong></div>
+  <div class="metric"><span>Open value</span><strong>Rs {{ metrics.open }}</strong></div>
+  <div class="metric"><span>Paid value</span><strong>Rs {{ metrics.paid }}</strong></div>
+</section>
+
+<section class="toolbar">
+  <form class="search-form" action="{{ url_for('records.dashboard') }}" method="get">
+    <input name="q" type="search" value="{{ query }}" placeholder="Search buyer, product, or notes">
+    <select name="status">
+      {% for option in ["all", "open", "paid", "cancelled"] %}
+        <option value="{{ option }}" {% if option == selected_status %}selected{% endif %}>{{ option|capitalize }}</option>
+      {% endfor %}
+    </select>
+    <button class="button button-secondary" type="submit">Filter</button>
+  </form>
+</section>
+
+<section class="panel table-panel">
+  {% if records %}
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Buyer</th>
+            <th>Product</th>
+            <th>Qty</th>
+            <th>Unit price</th>
+            <th>Total</th>
+            <th>Status</th>
+            <th>Updated</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for record in records %}
+            <tr>
+              <td>
+                <strong>{{ record.buyer_name }}</strong>
+                {% if record.notes %}<span class="muted">{{ record.notes }}</span>{% endif %}
+              </td>
+              <td>{{ record.product_name }}</td>
+              <td>{{ record.quantity }}</td>
+              <td>Rs {{ record.unit_price_cents|money }}</td>
+              <td>Rs {{ record.total_cents|money }}</td>
+              <td><span class="status status-{{ record.status }}">{{ record.status }}</span></td>
+              <td>{{ record.updated_at }}</td>
+              <td class="actions">
+                <a class="link-button" href="{{ url_for('records.edit', record_id=record.id) }}">Edit</a>
+                <form action="{{ url_for('records.delete', record_id=record.id) }}" method="post">
+                  <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+                  <button class="link-button danger" type="submit">Delete</button>
+                </form>
+              </td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  {% else %}
+    <div class="empty-state">
+      <h2>No records found</h2>
+      <p>Add a buyer record or adjust the current filter.</p>
+      <a class="button button-primary" href="{{ url_for('records.create') }}">Add first record</a>
+    </div>
+  {% endif %}
+</section>
+{% endblock %}

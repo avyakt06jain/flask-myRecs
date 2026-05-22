@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}Create account - MyRecs{% endblock %}
+
+{% block content %}
+<section class="auth-shell">
+  <div class="auth-copy">
+    <p class="eyebrow">Small business records</p>
+    <h1>A practical workspace for order records and receivables.</h1>
+    <p>Create a private account, add records, filter open payments, and maintain clean operational data in SQLite.</p>
+  </div>
+
+  <form class="panel auth-panel" action="{{ url_for('auth.register') }}" method="post">
+    <input type="hidden" name="_csrf_token" value="{{ csrf_token() }}">
+    <h2>Create account</h2>
+    <label>
+      Name
+      <input name="name" type="text" autocomplete="name" minlength="2" required>
+    </label>
+    <label>
+      Email
+      <input name="email" type="email" autocomplete="email" required>
+    </label>
+    <label>
+      Password
+      <input name="password" type="password" autocomplete="new-password" minlength="8" required>
+    </label>
+    <button class="button button-primary button-full" type="submit">Create workspace</button>
+    <p class="form-note">Already registered? <a href="{{ url_for('auth.login') }}">Sign in</a>.</p>
+  </form>
+</section>
+{% endblock %}
